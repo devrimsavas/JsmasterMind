@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Mind</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+            height: 100vh;
+            background-color: #082d13;            
+        }
+
+        h1 {
+            color:#ccc;
+        }
+
+        .input-box {
+            width:800px;
+            display: flex;            
+            display:inline-block;        
+            background-image:linear-gradient(rgb(9, 9, 49),beige);
+            border-radius:10px;
+            margin-left:20px;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-size:22px;
+        }
+
+        p {
+            display: flex;
+            color:rgb(54, 59, 63);
+            font-size:20px;
+        }
+        input[type="text"], button {
+            
+            font-size: 16px;
+            border: 1px solid #ccc;
+            transition: all 0.3s ease-in-out;
+            border-radius: 5px;
+            width:150px;
+            height:30px;
+            margin-left:40px;
+            font-size:25px;
+        }
+
+        button {
+            background-color: #0077CC;
+            color: white;
+            border-color: #0077CC;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width:150px;
+            height:30px;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        #guessButton {
+            background-color:#60af4e;
+        }
+
+        button:hover {
+            background-color: #666d72;
+
+        }
+
+        #output {
+            font-size:22px;
+            
+            width:600px;
+            height:60px;
+            background-color:rgb(245, 241, 235);
+            border-radius:10px;
+            box-shadow:5px 5px 5px darkgray;
+            margin-left:10px;
+            font-size:30px;
+        }
+
+        #output p {
+            color:white;
+        }
+
+
+        #lastGuessBox {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        display: none; 
+        }
+
+        #lastGuess {
+            font-weight: bold;
+            color: #3d3636;
+        }
+
+
+        
+
+    </style>
+</head>
+<body>
+    <h1> MASTER MIND</h1><hr>
+    <div class="input-box">
+        <p style="color:wheat;">How many digits? </p><hr>
+        <input type="text" id="digitsInput" value="3"> <button onclick="startGame()">Start Game</button><br><hr>
+        <input type="text" id="guessInput" placeholder="your guess" > 
+        <button id="guessButton" onclick="checkGuess()" id="guessButton" >Guess</button>
+        <p id="output"></p>
+    </div>
+    <div id="lastGuessBox">
+        Last Guess: <span id="lastGuess"></span>
+    </div>
+    
+    <script>
+        let secretNumber = "";
+        let length = 0;
+        let game = false;
+
+        function startGame() {
+            document.getElementById('output').innerHTML="";
+            length = parseInt(document.getElementById("digitsInput").value);
+            if (!isNaN(length)) {
+                secretNumber = generateSecretNumber(length);
+                game = true;
+                document.getElementById("guessInput").style.display = "inline";
+                document.getElementById("guessButton").style.display = "inline";
+            }
+        }
+
+        function generateSecretNumber(length) {
+            let number = "";
+            for (let i = 0; i < length; i++) {
+                number += Math.floor(Math.random() * 10).toString();
+            }
+            return number;
+        }
+
+        function checkGuess() {
+            let outputElement = document.getElementById("output");
+            
+
+            if (game) {
+                let guess = document.getElementById("guessInput").value;
+                if (guess.length !== length) {
+                    alert(`Your guess should be ${length}-digit number.`);
+                    return;
+                }
+
+                let counter = 0;
+                let correctDigits = 0;
+                let matchedDigits = new Set();
+
+                for (let i = 0; i < length; i++) {
+                    if (secretNumber.includes(guess[i]) && !matchedDigits.has(guess[i])) {
+                        counter++;
+                        matchedDigits.add(guess[i]);
+                    }
+                    if (guess[i] === secretNumber[i]) {
+                        correctDigits++;
+                    }
+                }
+
+                outputElement.innerHTML= `${counter} digits exist:${correctDigits} digits are in the right place.`;
+                document.getElementById('lastGuess').innerText = guess;
+                document.getElementById('lastGuessBox').style.display = 'block'; // last guess box
+                if (guess === secretNumber) {
+                    let again = prompt("Congratulations! You guessed the secret number. Play again? (y/n)");
+                    if (again.toLowerCase() === 'y') {
+                        startGame();
+                    } else {
+                        alert('Thank you very much');
+                        game = false;
+                        document.getElementById("guessInput").style.display = "none";
+                        document.getElementById("guessButton").style.display = "none";
+                        outputElement.innerHTML = "";
+                    }
+                }
+
+            }
+            
+            
+        }
+    </script>
+</body>
+</html>
